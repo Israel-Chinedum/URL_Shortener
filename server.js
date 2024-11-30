@@ -21,6 +21,8 @@ app.listen(port, () => {
 
 app.post('/api/shorturl', (req, res) => {
 
+    console.log('A request was just made!')
+
     let urlShort = '';
 
     const urlGen = () => {
@@ -53,7 +55,7 @@ app.post('/api/shorturl', (req, res) => {
                     }
                 }
 
-                allUrl.push({url: urlShort, longUrl: req.body['URL']});
+                allUrl.push({url: urlShort, longUrl: req.body['url']});
                 newData = allUrl;
                 resolve();
             });
@@ -63,21 +65,21 @@ app.post('/api/shorturl', (req, res) => {
 
             fs.writeFile('./all_url.json', JSON.stringify(newData), err => {
                 if(err) throw err;
-                res.json({original_url: req.body['URL'], short_url: urlShort});
+                res.json({original_url: req.body['url'], short_url: urlShort});
             });
 
            });
            
         } else{
-            fs.writeFile('./all_url.json', JSON.stringify([{url: urlShort, longUrl: req.body['URL']}]), err => {
+            fs.writeFile('./all_url.json', JSON.stringify([{url: urlShort, longUrl: req.body['url']}]), err => {
                 if(err) throw err;
-                res.json({original_url: req.body['URL'], short_url: urlShort});
+                res.json({original_url: req.body['url'], short_url: urlShort});
             });
         }
     }
 
     try{
-        const userUrl = new URL(req.body['URL']);
+        const userUrl = new URL(req.body['url']);
         dns.lookup(`${userUrl.hostname}`,  (err, address) => {
             if(err){
                 res.json({'error': 'invalid url'});
@@ -93,13 +95,14 @@ app.post('/api/shorturl', (req, res) => {
 });
 
 
-if(fs.existsSync('./all_url.json')){
+app.get('/api/shorturl/:url', (req, res) => {
     fs.readFile('./all_url.json', (err, data) => {
         if(err) throw err;
-        JSON.parse(data.toString()).forEach(urlData => {
-            app.get(`/api/shorturl/${urlData.url}`, (req, res) => {
-                res.redirect(`/${urlData.longUrl}`);
-            });
+        const allUrl = JSON.parse(data.toString());
+        allUrl.forEach(({shorturl, originalUrl}) => {
+            if(req.params.url == shorturl){
+                res.redirect(`${originalUrl}`);
+            }
         });
     });
-}
+});
