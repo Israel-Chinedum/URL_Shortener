@@ -1,0 +1,18 @@
+{
+  "name": "url_shortener",
+  "version": "1.0.0",
+  "description": "A free code camp project for my certification on backend and api",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "shortener": "nodemon server.js"
+  },
+  "author": "ISRAEL FAVOUR",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7"
+  },
+  "type": "module"
+}
