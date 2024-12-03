@@ -95,13 +95,15 @@ app.post('/api/shorturl', (req, res) => {
 });
 
 
-app.get('/api/shorturl/:url', (req, res) => {
+app.get('/api/shorturl/:code', (req, res) => {
+    console.log(req.params.code)
     fs.readFile('./all_url.json', (err, data) => {
         if(err) throw err;
         const allUrl = JSON.parse(data.toString());
-        allUrl.forEach(({shorturl, originalUrl}) => {
-            if(req.params.url == shorturl){
-                res.redirect(`${originalUrl}`);
+        allUrl.forEach(({url, longUrl}) => {
+            if(req.params.code == url){
+                console.log(url, longUrl)
+                res.redirect(`${longUrl}`);
             }
         });
     });
